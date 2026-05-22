@@ -3,358 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Sorting Algorithm Visualizer</title>
+    <title>Sorting Algorithm Visualizer</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --text-color: #f8fafc;
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --bar-default: #94a3b8;
+            --bar-active: #ef4444;
+            --bar-sorted: #10b981;
+            --border-color: #334155;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
-        
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #121212, #232323);
-            color: #ffffff;
-            perspective: 1000px;
-            overflow-x: hidden;
-            transition: background 0.5s ease;
+            padding: 2rem;
         }
-        
-        .container {
+
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--text-color);
+        }
+
+        .controls-panel {
+            background-color: var(--panel-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 90%;
-            max-width: 900px;
-            padding: 30px;
-            background-color: rgba(255, 255, 255, 0.03);
-            border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transform-style: preserve-3d;
-            transform: rotateX(10deg);
-            transition: background-color 0.5s ease, border-color 0.5s ease;
+            gap: 1.5rem;
         }
-        
-        .controls {
+
+        .controls-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 1.5rem;
             justify-content: center;
-            margin-bottom: 30px;
-            width: 100%;
-            transform-style: preserve-3d;
+            align-items: center;
         }
-        
-        button {
-            padding: 12px 20px;
-            background-color: rgba(255, 255, 255, 0.06);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            outline: none;
-            transform-style: preserve-3d;
-            transform: translateZ(10px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: center;
         }
-        
-        select {
-            padding: 12px 20px;
-            min-width: 200px;
-            background-color: rgba(100, 65, 255, 0.2);
-            color: #ffffff;
-            border: 1px solid rgba(100, 65, 255, 0.4);
-            border-radius: 12px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            outline: none;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 16px;
-            padding-right: 40px;
-            transform-style: preserve-3d;
-            transform: translateZ(10px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        button:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            transform: translateZ(15px) translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-        }
-        
-        select:hover {
-            background-color: rgba(100, 65, 255, 0.3);
-            transform: translateZ(15px) translateY(-2px);
-            box-shadow: 0 8px 20px rgba(100, 65, 255, 0.3);
-        }
-        
-        select:focus {
-            border-color: rgba(100, 65, 255, 0.8);
-            box-shadow: 0 0 0 2px rgba(100, 65, 255, 0.3);
-        }
-        
+
         label {
-            font-size: 16px;
-            margin-right: 10px;
-            font-weight: 300;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #cbd5e1;
         }
-        
-        .array-container {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            height: 400px;
-            width: 100%;
-            padding: 20px 0;
-            transform-style: preserve-3d;
-            transform: rotateX(20deg) translateZ(20px);
-            perspective: 1000px;
-            transition: transform 0.5s ease;
-        }
-        
-        .array-bar {
-            margin: 0 3px;
-            width: 25px;
-            background-color: #808B96;
-            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
-            border-radius: 5px 5px 0 0;
-            color: #fff;
-            font-size: 10px;
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            padding-bottom: 4px;
-            transition: all 0.2s ease-in-out;
-            transform-style: preserve-3d;
-            position: relative;
-            transform-origin: bottom center;
-            background-image: 
-                linear-gradient(to right, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) 10%, transparent 10%, transparent 90%),
-                linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) 10%, transparent 10%, transparent 90%);
-            background-size: 10px 10px;
-        }
-        
-        .array-bar::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            bottom: -5px;
-            left: 0;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
-            transform: rotateX(-90deg) translateZ(-2px) scaleY(0.1);
-            transform-origin: bottom;
-            filter: blur(2px);
-            border-radius: 2px;
-        }
-        
-        .array-bar.active {
-            background-color: #FF416C;
-            box-shadow: 0 0 20px rgba(255, 65, 108, 0.7);
-            transform: translateY(-5px) scale(1.05) translateZ(20px);
-        }
-        
-        .array-bar.sorted {
-            background-color: blue;
-            box-shadow: 2px 2px 12px rgba(0, 0, 255, 0.6);
-            transform: scale(1.03) translateZ(10px);
-        }
-        
-        .array-elements {
-            margin-top: 30px;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.6);
-            text-align: center;
-            max-width: 100%;
-            overflow-x: auto;
-            padding: 10px;
-            white-space: nowrap;
-            border-radius: 8px;
-            background-color: rgba(255, 255, 255, 0.03);
-            transform: translateZ(5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        h1 {
-            margin-bottom: 20px;
-            font-weight: 300;
-            letter-spacing: 1px;
-            font-size: 28px;
-            color: rgba(255, 255, 255, 0.9);
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-            transform-style: preserve-3d;
-            transform: translateZ(20px);
-        }
-        
-        .info {
-            margin-top: 20px;
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.5);
-            text-align: center;
-            transform: translateZ(5px);
-        }
-        
-        .floor {
-            position: absolute;
-            width: 150%;
-            height: 400px;
-            background: linear-gradient(rgba(0, 0, 0, 0), rgba(100, 65, 255, 0.05));
-            transform: rotateX(75deg) translateY(100px) translateZ(-100px);
-            z-index: -1;
-            border-radius: 50%;
-            filter: blur(10px);
-            transition: background 0.5s ease;
-        }
-        
-        @keyframes rotate {
-            0% {
-                transform: rotateY(0deg);
-            }
-            100% {
-                transform: rotateY(360deg);
-            }
-        }
-        
-        .array-container:hover {
-            animation: hover-animation 2s infinite alternate ease-in-out;
-        }
-        
-        @keyframes hover-animation {
-            0% {
-                transform: rotateX(20deg) translateZ(20px);
-            }
-            100% {
-                transform: rotateX(25deg) translateZ(30px);
-            }
-        }
-        
-        .visualizer-scene {
-            position: relative;
-            transform-style: preserve-3d;
-            width: 100%;
-        }
-        
-        #day-mode, #night-mode {
-            padding: 0;
-            font-size: 16px;
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background-color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+        }
+
+        button:disabled {
+            background-color: #475569;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        select {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 0.75rem;
+            border-radius: 6px;
             outline: none;
-            transform-style: preserve-3d;
-            transform: translateZ(10px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        select:focus {
+            border-color: var(--primary-color);
+        }
+
+        input[type="range"] {
+            accent-color: var(--primary-color);
+            width: 150px;
+            cursor: pointer;
+        }
+
+        .visualizer-container {
+            width: 100%;
+            max-width: 1000px;
+            height: 400px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 2px;
+            padding: 0 1rem;
+        }
+
+        .array-bar {
+            background-color: var(--bar-default);
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            transition: background-color 0.1s;
+        }
+
+        .array-bar.active {
+            background-color: var(--bar-active);
+        }
+
+        .array-bar.sorted {
+            background-color: var(--bar-sorted);
+        }
+
+        .legend {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            font-size: 0.875rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .legend-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        
-        #day-mode {
-            background-color: rgba(255, 223, 0, 0.2);
-            color: #ffffff;
-            border: 1px solid rgba(255, 223, 0, 0.3);
-        }
-        
-        #night-mode {
-            background-color: rgba(138, 43, 226, 0.2);
-            color: #ffffff;
-            border: 1px solid rgba(138, 43, 226, 0.3);
-        }
-        
-        #day-mode:hover {
-            background-color: rgba(255, 223, 0, 0.3);
-            transform: translateZ(15px) translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 223, 0, 0.4);
-        }
-        
-        #night-mode:hover {
-            background-color: rgba(138, 43, 226, 0.3);
-            transform: translateZ(15px) translateY(-2px);
-            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.4);
+            gap: 0.5rem;
         }
 
-        .sun-3d {
-            position: relative;
-            width: 40px;
-            height: 40px;
-        }
-
-        .sun-circle {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background: #FFD700;
-            border-radius: 50%;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
-        }
-
-        .sun-ray {
-            position: absolute;
-            background: #FFD700;
-            width: 4px;
-            height: 12px;
-            border-radius: 2px;
-            left: 50%;
-            top: 50%;
-            margin-left: -2px;
-            margin-top: -6px;
-            box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
-        }
-
-        .moon-3d {
-            position: relative;
-            width: 40px;
-            height: 40px;
-        }
-
-        .moon-circle {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background: #E6E6FA;
-            border-radius: 50%;
-            box-shadow: 0 0 15px rgba(230, 230, 250, 0.7);
-        }
-
-        .moon-shadow {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background: rgba(20, 20, 40, 0.9);
-            border-radius: 50%;
-            top: -5px;
-            right: -5px;
+        .color-box {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
-    <div class="floor"></div>
-    <h1>3D Sorting Algorithm Visualizer</h1>
-    <div class="container">
-        <div class="controls">
-            <div>
-                <label for="algorithm">Algorithm:</label>
+
+    <header>
+        <h1>Sorting Algorithm Visualizer</h1>
+    </header>
+
+    <div class="controls-panel">
+        <div class="controls-row">
+            <button id="generate-btn" onclick="generateNewArray()">Generate New Array</button>
+
+            <div class="control-group">
+                <label for="array-size">Array Size: <span id="size-val">40</span></label>
+                <input type="range" id="array-size" min="10" max="150" value="40" oninput="updateSize()">
+            </div>
+
+            <div class="control-group">
+                <label for="speed">Animation Speed</label>
+                <input type="range" id="speed" min="1" max="100" value="50">
+            </div>
+        </div>
+
+        <div class="controls-row">
+            <div class="control-group">
                 <select id="algorithm">
                     <option value="bubbleSort">Bubble Sort</option>
                     <option value="mergeSort">Merge Sort</option>
@@ -366,127 +207,101 @@
                     <option value="cocktailSort">Cocktail Sort</option>
                     <option value="radixSort">Radix Sort</option>
                     <option value="cycleSort">Cycle Sort</option>
+                    <option value="combSort">Comb Sort</option>
+                    <option value="gnomeSort">Gnome Sort</option>
                 </select>
             </div>
-            <div>
-                <label for="order">Order:</label>
+
+            <div class="control-group">
                 <select id="order">
                     <option value="ascending">Ascending</option>
                     <option value="descending">Descending</option>
                 </select>
             </div>
-            <button onclick="startSort()">Visualize</button>
-            <div style="display: flex; gap: 10px;">
-                <button id="day-mode" onclick="setDayMode()">
-                    <div class="sun-3d">
-                        <div class="sun-circle"></div>
-                        <div class="sun-ray" style="transform: rotate(0deg) translateY(-20px);"></div>
-                        <div class="sun-ray" style="transform: rotate(45deg) translateY(-20px);"></div>
-                        <div class="sun-ray" style="transform: rotate(90deg) translateY(-20px);"></div>
-                        <div class="sun-ray" style="transform: rotate(135deg) translateY(-20px);"></div>
-                        <div class="sun-ray" style="transform: rotate(180deg) translateY(-20px);"></div>
-                        <div class="sun-ray" style="transform: rotate(225deg) translateY(-20px);"></div>
-                        <div class="sun-ray" style="transform: rotate(270deg) translateY(-20px);"></div>
-                        <div class="sun-ray" style="transform: rotate(315deg) translateY(-20px);"></div>
-                    </div>
-                </button>
-                <button id="night-mode" onclick="setNightMode()">
-                    <div class="moon-3d">
-                        <div class="moon-circle"></div>
-                        <div class="moon-shadow"></div>
-                    </div>
-                </button>
-            </div>
+
+            <button id="sort-btn" onclick="startSort()">Visualize</button>
         </div>
-        <div class="visualizer-scene">
-            <div class="array-container" id="array-container"></div>
+    </div>
+
+    <div class="visualizer-container" id="array-container"></div>
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="color-box" style="background-color: var(--bar-default);"></div>
+            <span>Unsorted</span>
         </div>
-        <div class="array-elements" id="array-elements"></div>
-        <div class="info">Active: <span style="color: #FF416C;">■</span> &nbsp; Sorted: <span style="color: blue;">■</span></div>
+        <div class="legend-item">
+            <div class="color-box" style="background-color: var(--bar-active);"></div>
+            <span>Active / Comparing</span>
+        </div>
+        <div class="legend-item">
+            <div class="color-box" style="background-color: var(--bar-sorted);"></div>
+            <span>Sorted</span>
+        </div>
     </div>
 
     <script>
-        // Generate an array of random elements
-        let array = Array.from({ length: 40 }, () => Math.floor(Math.random() * 100) + 1);
-        const container = document.getElementById('array-container');
-        const elementsContainer = document.getElementById('array-elements');
+        let array = [];
         let isSorting = false;
         let order = 'ascending';
         
-        const body = document.body;
-        const containerElement = document.querySelector('.container');
-        const floor = document.querySelector('.floor');
-        
-        function setDayMode() {
-            body.style.background = 'linear-gradient(135deg, #f6d365, #fda085)';
-            containerElement.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
-            containerElement.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-            
-            const bars = document.querySelectorAll('.array-bar');
-            bars.forEach(bar => {
-                if (!bar.classList.contains('active') && !bar.classList.contains('sorted')) {
-                    bar.style.backgroundColor = '#ffb703';
-                    bar.style.boxShadow = '2px 2px 5px rgba(255, 190, 0, 0.5)';
-                    bar.style.color = '#333';
-                }
-            });
-            
-            floor.style.background = 'linear-gradient(rgba(0, 0, 0, 0), rgba(255, 223, 0, 0.1))';
-        }
-        
-        function setNightMode() {
-            body.style.background = 'linear-gradient(135deg, #121212, #232323)';
-            containerElement.style.backgroundColor = 'rgba(255, 255, 255, 0.03)';
-            containerElement.style.borderColor = 'rgba(255, 255, 255, 0.05)';
-            
-            const bars = document.querySelectorAll('.array-bar');
-            bars.forEach(bar => {
-                if (!bar.classList.contains('active') && !bar.classList.contains('sorted')) {
-                    bar.style.backgroundColor = '#808B96';
-                    bar.style.boxShadow = '2px 2px 8px rgba(0, 0, 0, 0.4)';
-                    bar.style.color = '#fff';
-                }
-            });
-            
-            floor.style.background = 'linear-gradient(rgba(0, 0, 0, 0), rgba(100, 65, 255, 0.05))';
+        const container = document.getElementById('array-container');
+
+        function updateSize() {
+            if (isSorting) return;
+            const size = document.getElementById('array-size').value;
+            document.getElementById('size-val').textContent = size;
+            generateNewArray();
         }
 
-        // Add mouse movement effect for 3D perspective
-        document.addEventListener('mousemove', function(e) {
-            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
-            
-            containerElement.style.transform = `rotateX(${10 - yAxis / 2}deg) rotateY(${xAxis / 2}deg)`;
-            
-            const arrayContainer = document.querySelector('.array-container');
-            arrayContainer.style.transform = `rotateX(${20 - yAxis / 3}deg) translateZ(20px)`;
-        });
+        function generateNewArray() {
+            if (isSorting) return;
+            const size = document.getElementById('array-size').value;
+            array = Array.from({ length: size }, () => Math.floor(Math.random() * 100) + 1);
+            createBars(array);
+        }
 
         function createBars(arr) {
             container.innerHTML = '';
-            const maxBarHeight = 350;
             const maxElement = Math.max(...arr);
             
-            arr.forEach((value, index) => {
+            arr.forEach((value) => {
                 const bar = document.createElement('div');
                 bar.classList.add('array-bar');
-                const height = (value / maxElement) * maxBarHeight;
-                bar.style.height = `${height}px`;
-                bar.textContent = value;
-                
-                // Add 3D transform with slight rotation based on position
-                const middleIndex = arr.length / 2;
-                const rotationFactor = (index - middleIndex) / middleIndex * 10;
-                bar.style.transform = `rotateY(${rotationFactor}deg) translateZ(${Math.abs(rotationFactor) * 2}px)`;
-                
+                const height = (value / maxElement) * 100;
+                bar.style.height = `${height}%`;
                 container.appendChild(bar);
             });
-            elementsContainer.textContent = `[${arr.join(', ')}]`;
+        }
+
+        function getDelay() {
+            const speedSlider = document.getElementById('speed').value;
+            // 1 to 100 mapped to roughly 1000ms down to 2ms
+            return Math.floor(1000 / Math.pow(speedSlider, 1.2));
         }
 
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
+
+        function toggleControls(disabled) {
+            document.getElementById('generate-btn').disabled = disabled;
+            document.getElementById('array-size').disabled = disabled;
+            document.getElementById('sort-btn').disabled = disabled;
+            document.getElementById('algorithm').disabled = disabled;
+            document.getElementById('order').disabled = disabled;
+        }
+
+        async function updateBarHeights() {
+            const bars = document.getElementsByClassName('array-bar');
+            const maxElement = Math.max(...array);
+            for (let i = 0; i < array.length; i++) {
+                const height = (array[i] / maxElement) * 100;
+                bars[i].style.height = `${height}%`;
+            }
+        }
+
+        // --- ALGORITHMS ---
 
         async function bubbleSort() {
             const bars = document.getElementsByClassName('array-bar');
@@ -495,47 +310,47 @@
                     if (!isSorting) return;
                     bars[j].classList.add('active');
                     bars[j + 1].classList.add('active');
-                    await sleep(50);
+                    await sleep(getDelay());
                     if (
                         (order === 'ascending' && array[j] > array[j + 1]) ||
                         (order === 'descending' && array[j] < array[j + 1])
                     ) {
                         [array[j], array[j + 1]] = [array[j + 1], array[j]];
-                        createBars(array);
+                        updateBarHeights();
                     }
                     bars[j].classList.remove('active');
                     bars[j + 1].classList.remove('active');
                 }
-                // Mark the sorted element
                 bars[array.length - 1 - i].classList.add('sorted');
             }
-            bars[0].classList.add('sorted');
+            if(isSorting) bars[0].classList.add('sorted');
         }
 
         async function insertionSort() {
             const bars = document.getElementsByClassName('array-bar');
+            if(isSorting) bars[0].classList.add('sorted');
             for (let i = 1; i < array.length; i++) {
                 if (!isSorting) return;
                 let key = array[i];
                 let j = i - 1;
                 bars[i].classList.add('active');
-                await sleep(100);
+                await sleep(getDelay());
                 
                 while (j >= 0 && 
                        ((order === 'ascending' && array[j] > key) || 
                         (order === 'descending' && array[j] < key))) {
-                    if (!isSorting) return;bars[j].classList.add('active');
-                    await sleep(50);
+                    if (!isSorting) return;
+                    bars[j].classList.add('active');
+                    await sleep(getDelay());
                     array[j + 1] = array[j];
-                    createBars(array);
+                    updateBarHeights();
                     bars[j].classList.remove('active');
                     j--;
                 }
                 array[j + 1] = key;
-                createBars(array);
+                updateBarHeights();
                 bars[i].classList.remove('active');
                 
-                // Mark sorted portion
                 for (let k = 0; k <= i; k++) {
                     bars[k].classList.add('sorted');
                 }
@@ -544,11 +359,10 @@
 
         async function mergeSort() {
             const auxArray = [...array];
-            const tempArray = [...array];
             
             async function mergeSortHelper(left, right) {
                 if (left < right) {
-                    const mid= Math.floor((left + right) / 2);
+                    const mid = Math.floor((left + right) / 2);
                     await mergeSortHelper(left, mid);
                     await mergeSortHelper(mid + 1, right);
                     await merge(left, mid, right);
@@ -557,28 +371,22 @@
             
             async function merge(left, mid, right) {
                 if (!isSorting) return;
-                
                 const bars = document.getElementsByClassName('array-bar');
                 
-                // Highlight the sections being merged
                 for (let i = left; i <= right; i++) {
                     if (!isSorting) return;
                     bars[i].classList.add('active');
                 }
-                await sleep(30);
+                await sleep(getDelay());
                 
-                // Copy to auxArray
                 for (let i = left; i <= right; i++) {
                     auxArray[i] = array[i];
                 }
                 
-                let i = left;
-                let j = mid + 1;
-                let k = left;
+                let i = left, j = mid + 1, k = left;
                 
                 while (i <= mid && j <= right) {
                     if (!isSorting) return;
-                    
                     if (
                         (order === 'ascending' && auxArray[i] <= auxArray[j]) ||
                         (order === 'descending' && auxArray[i] >= auxArray[j])
@@ -589,25 +397,22 @@
                         array[k] = auxArray[j];
                         j++;
                     }
+                    updateBarHeights();
                     k++;
-                    createBars(array);
-                    await sleep(30);
+                    await sleep(getDelay());
                 }
                 
-                // Copy remaining elements
                 while (i <= mid) {
                     if (!isSorting) return;
                     array[k] = auxArray[i];
+                    updateBarHeights();
                     i++;
                     k++;
-                    createBars(array);
-                    await sleep(30);
+                    await sleep(getDelay());
                 }
                 
-                // Remove active highlights
                 for (let i = left; i <= right; i++) {
                     bars[i].classList.remove('active');
-                    // Mark as sorted
                     bars[i].classList.add('sorted');
                 }
             }
@@ -624,6 +429,9 @@
                     const pi = await partition(low, high);
                     await quickSortHelper(low, pi - 1);
                     await quickSortHelper(pi + 1, high);
+                } else if(low === high && isSorting) {
+                    const bars = document.getElementsByClassName('array-bar');
+                    bars[low].classList.add('sorted');
                 }
             }
             
@@ -638,7 +446,7 @@
                 for (let j = low; j < high; j++) {
                     if (!isSorting) return;
                     bars[j].classList.add('active');
-                    await sleep(50);
+                    await sleep(getDelay());
                     
                     if (
                         (order === 'ascending' && array[j] < pivot) ||
@@ -646,30 +454,23 @@
                     ) {
                         i++;
                         [array[i], array[j]] = [array[j], array[i]];
-                        createBars(array);
+                        updateBarHeights();
                     }
-                    
                     bars[j].classList.remove('active');
                 }
                 
                 [array[i + 1], array[high]] = [array[high], array[i + 1]];
-                createBars(array);
+                updateBarHeights();
                 bars[high].classList.remove('active');
                 
-                // Mark the pivot in its final position
                 bars[i + 1].classList.add('sorted');
-                
                 return i + 1;
             }
             
             await quickSortHelper(0, array.length - 1);
-            
-            // Mark all as sorted at the end
-            const bars = document.getElementsByClassName('array-bar');
-            for (let i = 0; i < array.length; i++) {
-                if (!isSorting) return;
-                bars[i].classList.add('sorted');
-                await sleep(20);
+            if(isSorting) {
+                const bars = document.getElementsByClassName('array-bar');
+                for (let i = 0; i < array.length; i++) bars[i].classList.add('sorted');
             }
         }
         
@@ -683,15 +484,13 @@
                 for (let j = i + 1; j < array.length; j++) {
                     if (!isSorting) return;
                     bars[j].classList.add('active');
-                    await sleep(50);
+                    await sleep(getDelay());
                     
                     if (
                         (order === 'ascending' && array[j] < array[minIdx]) ||
                         (order === 'descending' && array[j] > array[minIdx])
                     ) {
-                        if (minIdx !== i) {
-                            bars[minIdx].classList.remove('active');
-                        }
+                        if (minIdx !== i) bars[minIdx].classList.remove('active');
                         minIdx = j;
                     } else {
                         bars[j].classList.remove('active');
@@ -700,16 +499,14 @@
                 
                 if (minIdx !== i) {
                     [array[i], array[minIdx]] = [array[minIdx], array[i]];
-                    createBars(array);
+                    updateBarHeights();
                     bars[minIdx].classList.remove('active');
                 }
                 
                 bars[i].classList.remove('active');
                 bars[i].classList.add('sorted');
             }
-            
-            // Mark the last element as sorted
-            bars[array.length - 1].classList.add('sorted');
+            if(isSorting) bars[array.length - 1].classList.add('sorted');
         }
         
         async function heapSort() {
@@ -721,29 +518,16 @@
                 let left = 2 * i + 1;
                 let right = 2 * i + 2;
                 
-                if (
-                    left < n &&
-                    ((order === 'ascending' && array[left] > array[largest]) ||
-                     (order === 'descending' && array[left] < array[largest]))
-                ) {
-                    largest = left;
-                }
-                
-                if (
-                    right < n &&
-                    ((order === 'ascending' && array[right] > array[largest]) ||
-                     (order === 'descending' && array[right] < array[largest]))
-                ) {
-                    largest = right;
-                }
+                if (left < n && ((order === 'ascending' && array[left] > array[largest]) || (order === 'descending' && array[left] < array[largest]))) largest = left;
+                if (right < n && ((order === 'ascending' && array[right] > array[largest]) || (order === 'descending' && array[right] < array[largest]))) largest = right;
                 
                 if (largest !== i) {
                     bars[i].classList.add('active');
                     bars[largest].classList.add('active');
-                    await sleep(50);
+                    await sleep(getDelay());
                     
                     [array[i], array[largest]] = [array[largest], array[i]];
-                    createBars(array);
+                    updateBarHeights();
                     
                     bars[i].classList.remove('active');
                     bars[largest].classList.remove('active');
@@ -752,37 +536,28 @@
                 }
             }
             
-            // Build heap
             const n = array.length;
             for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
                 if (!isSorting) return;
                 await heapify(n, i);
             }
             
-            // Extract elements from heap one by one
             for (let i = n - 1; i > 0; i--) {
                 if (!isSorting) return;
-                
-                // Move current root to end
                 bars[0].classList.add('active');
                 bars[i].classList.add('active');
-                await sleep(50);
+                await sleep(getDelay());
                 
                 [array[0], array[i]] = [array[i], array[0]];
-                createBars(array);
+                updateBarHeights();
                 
                 bars[0].classList.remove('active');
                 bars[i].classList.remove('active');
                 
-                // Mark sorted element
                 bars[i].classList.add('sorted');
-                
-                // Call heapify on the reduced heap
                 await heapify(i, 0);
             }
-            
-            // Mark the last element
-            bars[0].classList.add('sorted');
+            if(isSorting) bars[0].classList.add('sorted');
         }
 
         async function shellSort() {
@@ -791,12 +566,12 @@
 
             for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
                 for (let i = gap; i < n; i++) {
+                    if (!isSorting) return;
                     let temp = array[i];
                     let j = i;
 
-                    // Highlight the current bar
                     bars[i].classList.add('active');
-                    await sleep(50);
+                    await sleep(getDelay());
 
                     while (j >= gap && 
                            ((order === 'ascending' && array[j - gap] > temp) || 
@@ -804,27 +579,23 @@
                         if (!isSorting) return;
                         bars[j].classList.add('active');
                         bars[j - gap].classList.add('active');
-                        await sleep(50);
+                        await sleep(getDelay());
 
                         array[j] = array[j - gap];
-                        createBars(array);
+                        updateBarHeights();
 
                         bars[j].classList.remove('active');
                         bars[j - gap].classList.remove('active');
 
                         j -= gap;
                     }
-
                     array[j] = temp;
-                    createBars(array);
+                    updateBarHeights();
                     bars[i].classList.remove('active');
-                    bars[j].classList.add('sorted'); // Optionally mark as "sorted"
                 }
             }
-
-            // Optionally mark all bars as sorted at the end
-            for (let i = 0; i < n; i++) {
-                bars[i].classList.add('sorted');
+            if (isSorting) {
+                for (let i = 0; i < n; i++) bars[i].classList.add('sorted');
             }
         }
 
@@ -836,53 +607,49 @@
 
             while (swapped && isSorting) {
                 swapped = false;
-
-                // Forward pass (left to right)
                 for (let i = start; i < end; i++) {
                     if (!isSorting) return;
                     bars[i].classList.add('active');
                     bars[i + 1].classList.add('active');
-                    await sleep(50);
+                    await sleep(getDelay());
 
                     if (
                         (order === 'ascending' && array[i] > array[i + 1]) ||
                         (order === 'descending' && array[i] < array[i + 1])
                     ) {
                         [array[i], array[i + 1]] = [array[i + 1], array[i]];
-                        createBars(array);
+                        updateBarHeights();
                         swapped = true;
                     }
                     bars[i].classList.remove('active');
                     bars[i + 1].classList.remove('active');
                 }
                 if (!swapped) break;
+                if(isSorting) bars[end].classList.add('sorted');
                 end--;
 
-                // Backward pass (right to left)
                 for (let i = end; i > start; i--) {
                     if (!isSorting) return;
                     bars[i].classList.add('active');
                     bars[i - 1].classList.add('active');
-                    await sleep(50);
+                    await sleep(getDelay());
+
                     if (
                         (order === 'ascending' && array[i - 1] > array[i]) ||
                         (order === 'descending' && array[i - 1] < array[i])
                     ) {
                         [array[i - 1], array[i]] = [array[i], array[i - 1]];
-                        createBars(array);
+                        updateBarHeights();
                         swapped = true;
                     }
                     bars[i].classList.remove('active');
                     bars[i - 1].classList.remove('active');
                 }
+                if(isSorting) bars[start].classList.add('sorted');
                 start++;
             }
-
-            // Mark all elements as sorted
             if (isSorting) {
-                for (let i = 0; i < array.length; i++) {
-                    bars[i].classList.add('sorted');
-                }
+                for (let i = 0; i < array.length; i++) bars[i].classList.add('sorted');
             }
         }
 
@@ -891,38 +658,36 @@
             const maxNum = Math.max(...array);
             let divisor = 1;
 
-            while (divisor <= maxNum) {
-                let buckets = Array.from({ length: 10 }, () => []); // 10 buckets for digits 0-9
+            while (divisor <= maxNum && isSorting) {
+                let buckets = Array.from({ length: 10 }, () => []);
 
-                // Distribute elements into buckets based on the current digit
                 for (let i = 0; i < array.length; i++) {
                     if (!isSorting) return;
                     const digit = Math.floor((array[i] / divisor) % 10);
                     buckets[digit].push(array[i]);
-
-                    // Highlight the current bar
                     bars[i].classList.add('active');
-                    await sleep(50);
+                    await sleep(getDelay());
                     bars[i].classList.remove('active');
                 }
 
                 let index = 0;
-                // Collect elements from buckets back into the array
+                // If descending, process buckets in reverse order
+                const bucketIter = order === 'ascending' ? buckets : buckets.slice().reverse();
                 for (let i = 0; i < 10; i++) {
-                    for (let j = 0; j < buckets[i].length; j++) {
+                    for (let j = 0; j < bucketIter[i].length; j++) {
                         if (!isSorting) return;
-                        array[index] = buckets[i][j];
-                        createBars(array);
-
-                        // Highlight the bar being placed
+                        array[index] = bucketIter[i][j];
+                        updateBarHeights();
                         bars[index].classList.add('active');
-                        await sleep(50);
+                        await sleep(getDelay());
                         bars[index].classList.remove('active');
-                        bars[index].classList.add('sorted'); // Mark as sorted
                         index++;
                     }
                 }
                 divisor *= 10;
+            }
+            if (isSorting) {
+                for(let i=0; i<array.length; i++) bars[i].classList.add('sorted');
             }
         }
 
@@ -931,131 +696,165 @@
             const n = array.length;
 
             for (let cycleStart = 0; cycleStart < n - 1; cycleStart++) {
+                if (!isSorting) return;
                 let item = array[cycleStart];
                 let pos = cycleStart;
 
                 for (let i = cycleStart + 1; i < n; i++) {
                     if (!isSorting) return;
-                    if (
-                        (order === 'ascending' && array[i] < item) ||
-                        (order === 'descending' && array[i] > item)
-                    ) {
-                        pos++;
-                    }
+                    if ((order === 'ascending' && array[i] < item) || (order === 'descending' && array[i] > item)) pos++;
                 }
 
-                if (pos === cycleStart) {
-                    continue;
-                }
+                if (pos === cycleStart) continue;
 
-                while (
-                    (order === 'ascending' && item === array[pos]) ||
-                    (order === 'descending' && item === array[pos])
-                ) {
-                    pos++;
-                }
+                while ((order === 'ascending' && item === array[pos]) || (order === 'descending' && item === array[pos])) pos++;
 
                 if (pos !== cycleStart) {
                     bars[cycleStart].classList.add('active');
                     bars[pos].classList.add('active');
-                    await sleep(100);
+                    await sleep(getDelay());
 
                     [array[pos], item] = [item, array[pos]];
-                    createBars(array);
+                    updateBarHeights();
 
                     bars[cycleStart].classList.remove('active');
                     bars[pos].classList.remove('active');
                 }
 
                 while (pos !== cycleStart) {
+                    if (!isSorting) return;
                     pos = cycleStart;
                     for (let i = cycleStart + 1; i < n; i++) {
                         if (!isSorting) return;
-                        if (
-                            (order === 'ascending' && array[i] < item) ||
-                            (order === 'descending' && array[i] > item)
-                        ) {
-                            pos++;
-                        }
+                        if ((order === 'ascending' && array[i] < item) || (order === 'descending' && array[i] > item)) pos++;
                     }
-
-                    while (
-                        (order === 'ascending' && item === array[pos]) ||
-                        (order === 'descending' && item === array[pos])
-                    ) {
-                        pos++;
-                    }
+                    while ((order === 'ascending' && item === array[pos]) || (order === 'descending' && item === array[pos])) pos++;
 
                     bars[pos].classList.add('active');
                     bars[cycleStart].classList.add('active');
-                    await sleep(100);
+                    await sleep(getDelay());
 
                     [array[pos], item] = [item, array[pos]];
-                    createBars(array);
+                    updateBarHeights();
 
                     bars[pos].classList.remove('active');
                     bars[cycleStart].classList.remove('active');
                 }
-                bars[cycleStart].classList.add('sorted');
             }
             if (isSorting) {
-                for (let i = 0; i < array.length; i++) {
-                    bars[i].classList.add('sorted');
-                }
+                for (let i = 0; i < array.length; i++) bars[i].classList.add('sorted');
             }
         }
 
-        function startSort() {
-            // Reset any ongoing sorting
-            isSorting = false;
-            setTimeout(() => {
-                // Generate new array with fewer elements for better performance
-                array = Array.from({ length: 40 }, () => Math.floor(Math.random() * 100) + 1);
-                createBars(array);
-                
-                // Start new sorting
-                isSorting = true;
-                const algorithm = document.getElementById('algorithm').value;
-                order = document.getElementById('order').value;
-                
-                switch (algorithm) {
-                    case 'bubbleSort':
-                        bubbleSort();
-                        break;
-                    case 'mergeSort':
-                        mergeSort();
-                        break;
-                    case 'insertionSort':
-                        insertionSort();
-                        break;
-                    case 'quickSort':
-                        quickSort();
-                        break;
-                    case 'selectionSort':
-                        selectionSort();
-                        break;
-                    case 'heapSort':
-                        heapSort();
-                        break;
-                    case 'shellSort':
-                        shellSort();
-                        break;
-                    case 'cocktailSort':
-                        cocktailSort();
-                        break;
-                    case 'radixSort':
-                        radixSort();
-                        break;
-                    case 'cycleSort':
-                        cycleSort();
-                        break;
+        async function combSort() {
+            const bars = document.getElementsByClassName('array-bar');
+            const n = array.length;
+            let gap = n;
+            let swapped = true;
+
+            while (gap !== 1 || swapped) {
+                if (!isSorting) return;
+                gap = Math.floor((gap * 10) / 13);
+                if (gap < 1) gap = 1;
+                swapped = false;
+
+                for (let i = 0; i < n - gap; i++) {
+                    if (!isSorting) return;
+                    bars[i].classList.add('active');
+                    bars[i + gap].classList.add('active');
+                    await sleep(getDelay());
+
+                    if (
+                        (order === 'ascending' && array[i] > array[i + gap]) ||
+                        (order === 'descending' && array[i] < array[i + gap])
+                    ) {
+                        [array[i], array[i + gap]] = [array[i + gap], array[i]];
+                        updateBarHeights();
+                        swapped = true;
+                    }
+
+                    bars[i].classList.remove('active');
+                    bars[i + gap].classList.remove('active');
                 }
-            }, 100);
+            }
+            if (isSorting) {
+                for (let i = 0; i < array.length; i++) bars[i].classList.add('sorted');
+            }
         }
 
-        // Initialize array bars
-        createBars(array);
-        setNightMode();
+        async function gnomeSort() {
+            const bars = document.getElementsByClassName('array-bar');
+            let index = 0;
+            const n = array.length;
+
+            while (index < n) {
+                if (!isSorting) return;
+                if (index === 0) {
+                    index++;
+                }
+                
+                bars[index].classList.add('active');
+                bars[index - 1].classList.add('active');
+                await sleep(getDelay());
+
+                if (
+                    (order === 'ascending' && array[index] >= array[index - 1]) ||
+                    (order === 'descending' && array[index] <= array[index - 1])
+                ) {
+                    bars[index].classList.remove('active');
+                    bars[index - 1].classList.remove('active');
+                    index++;
+                } else {
+                    [array[index], array[index - 1]] = [array[index - 1], array[index]];
+                    updateBarHeights();
+                    bars[index].classList.remove('active');
+                    bars[index - 1].classList.remove('active');
+                    index--;
+                }
+            }
+            if (isSorting) {
+                for (let i = 0; i < array.length; i++) bars[i].classList.add('sorted');
+            }
+        }
+
+        async function startSort() {
+            if (isSorting) return;
+            isSorting = true;
+
+            toggleControls(true);
+
+            const bars = document.getElementsByClassName('array-bar');
+            for (let bar of bars) {
+                bar.classList.remove('sorted');
+                bar.classList.remove('active');
+            }
+
+            const algorithm = document.getElementById('algorithm').value;
+            order = document.getElementById('order').value;
+
+            try {
+                switch (algorithm) {
+                    case 'bubbleSort': await bubbleSort(); break;
+                    case 'mergeSort': await mergeSort(); break;
+                    case 'insertionSort': await insertionSort(); break;
+                    case 'quickSort': await quickSort(); break;
+                    case 'selectionSort': await selectionSort(); break;
+                    case 'heapSort': await heapSort(); break;
+                    case 'shellSort': await shellSort(); break;
+                    case 'cocktailSort': await cocktailSort(); break;
+                    case 'radixSort': await radixSort(); break;
+                    case 'cycleSort': await cycleSort(); break;
+                    case 'combSort': await combSort(); break;
+                    case 'gnomeSort': await gnomeSort(); break;
+                }
+            } finally {
+                isSorting = false;
+                toggleControls(false);
+            }
+        }
+
+        // Initialize
+        generateNewArray();
     </script>
 </body>
 </html>
